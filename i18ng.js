@@ -1,10 +1,20 @@
-angular.module('i18ng', ['ng'])
-angular.module('i18ng')
+
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['i18next-client', 'angular'], factory)
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory(require('i18next-client'), require('angular'))
+    } else {
+        factory(root.i18n, root.angular)
+    }
+}(this, function(i18n, angular) {
+  
+  var i18ngModule = angular.module('i18ng', ['ng'])
+  
+  i18ngModule
   .provider('i18ng', function() {
 
     'use strict'
-
-    var i18n = window.i18n
 
     var options = []
     this.init = function() {
@@ -16,7 +26,7 @@ angular.module('i18ng')
       var callback = options[1] || function() {}
       if (typeof opts === 'function') callback = opts, opts = {}
 
-      i18n.init.call(i18n, opts, function(t) {
+      i18n.init.call(i18n, opts, function(err, t) {
         i18n.t = t
         if (!$rootScope.$$phase)
           $rootScope.$digest()
@@ -135,3 +145,7 @@ angular.module('i18ng')
       }
     }
   }])
+
+  return i18ngModule.name
+
+}))
